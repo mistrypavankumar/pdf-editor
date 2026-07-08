@@ -1,0 +1,48 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body { height: 100%; }
+body { overflow: hidden; }
+
+/* --- PDF editable text layer --- */
+.text-layer {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  line-height: 1;
+  transform-origin: 0 0;
+  pointer-events: none; /* transparent overlay by default — clicks fall through */
+}
+.text-layer .t {
+  position: absolute;
+  white-space: pre;
+  transform-origin: 0 0;
+  color: transparent;
+  caret-color: #1c1e21;
+  border-radius: 2px;
+}
+/* In "Edit PDF" mode the runs become clickable so you can edit them in place */
+body[data-mode="editpdf"] .text-layer { pointer-events: auto; }
+body[data-mode="editpdf"] .text-layer .t { cursor: text; }
+/* The run being edited (and any changed run) is painted opaque with a white
+   backing so it masks the original raster ink underneath. */
+.text-layer .t.editing {
+  color: var(--ink, #1c1e21);
+  background: #fff;
+  box-shadow: 0 0 0 1px #2563eb;
+  outline: none;
+  z-index: 5;
+}
+.text-layer .t[data-changed="1"] {
+  color: var(--ink, #1c1e21);
+  background: #fff;
+}
+
+.anno-layer { position: absolute; inset: 0; }
+
+/* thin scrollbars for the workspace */
+.workspace::-webkit-scrollbar { width: 12px; height: 12px; }
+.workspace::-webkit-scrollbar-thumb {
+  background: #c7cbd1; border-radius: 8px; border: 3px solid #f1f2f4;
+}
