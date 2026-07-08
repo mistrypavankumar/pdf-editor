@@ -2,12 +2,11 @@ import * as pdfjsLib from "pdfjs-dist";
 import type { PDFDocumentProxy, PDFPageProxy } from "pdfjs-dist";
 import type { PageInfo, TextRun } from "./types";
 
-// Wire up the worker (webpack/Next emits this as an asset).
+// Wire up the worker. We load it from /public (copied there by scripts/
+// copy-worker.mjs) rather than importing it, so webpack never re-minifies the
+// already-minified ESM worker — Terser can't re-parse it and the prod build fails.
 if (typeof window !== "undefined") {
-  pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
-    "pdfjs-dist/build/pdf.worker.min.mjs",
-    import.meta.url
-  ).toString();
+  pdfjsLib.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.mjs";
 }
 
 export type { PDFDocumentProxy, PDFPageProxy };
